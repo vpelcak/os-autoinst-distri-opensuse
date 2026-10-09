@@ -1,0 +1,69 @@
+#!/bin/bash
+# METADATA_START
+# ---
+# test: cpio
+# desc: >
+#   Functional tests for GNU cpio. Exercises the archive formats supported by
+#   cpio, copy-out/copy-in and pass-through modes, symbolic and hard links,
+#   modification-time and permission preservation, listing, and the
+#   --no-absolute-filenames and block-size guards. Ported from
+#   tests/console/cpio.pm and extended with the upstream GNU cpio tests/
+#   suite (copyin/copyout, interdir, symlink and delayed setstat). Checks that
+#   need a cpio newer than the one SLE 15 ships are skipped, not failed.
+# steps:
+#   - build a deterministic sample tree with a nested directory, an empty
+#     directory, an empty file, a filename containing a space, a symlink and a
+#     member larger than one block
+#   - copy the tree out and back in with bin, odc, newc, crc, tar, ustar,
+#     hpbin and hpodc, and verify content, type and mode of every member
+#   - verify -m restores a member modification time
+#   - verify the -O and -I archive-file options round-trip the tree
+#   - verify a cpio call with an unreadable archive fails instead of hanging
+#     (bsc#1189463)
+#   - verify a symlink is stored and restored as a symlink
+#   - verify a symlink with a target longer than cpio's old read buffer keeps
+#     its complete target
+#   - verify --to-stdout writes the regular member and skips the symlink
+#   - verify newc extraction recreates a hardlink as the same inode
+#   - verify --no-absolute-filenames does not restore an absolute symlink
+#     (CVE-2015-1197, cpio 2.13+)
+#   - verify a 0500 directory and a directory archived as 0755 keep their
+#     mode when extracted, independent of the extraction umask
+#   - verify -m restores a symlink's own modification time (cpio 2.15+)
+#   - verify -it lists exactly the archived members
+#   - verify copy-pass creates intermediate directories and keeps the mode
+#   - verify an out-of-range --block-size is rejected (cpio 2.13+)
+# author: Vit Pelcak <vpelcak@suse.com>
+# maintainer: Vit Pelcak <vpelcak@suse.com>
+# expected: all tests pass
+# platform: Tumbleweed, SLE 16+, SLE 15 SP2+
+# tags: console cpio
+# ---
+# METADATA_END
+
+set -e
+
+source ../lib/helper.sh
+
+TEST_FILES=(test_cpio.py)
+
+handle_args "$0" "$@"
+
+ensure_command_available cpio
+
+echo "--- Test directory: $PWD ---"
+ls -l
+echo "----------------------------"
+
+set +e
+pytest -v --tb=short test_cpio.py --junitxml=results.xml
+rc=$?
+set -e
+# The openQA runner parses results.xml itself, so let plain test failures
+# (rc=1) through as success and let it record each testcase. Anything else
+# (collection, usage or internal error, no tests) must fail, so a run where
+# nothing actually executed can never look green.
+if [ "$rc" -eq 1 ] && [ -f results.xml ]; then
+    exit 0
+fi
+exit "$rc"

@@ -22,7 +22,7 @@ schedule:
   - coverage/coverage_setup
   - network/snmp
 #  - console/dig
-  - console/cpio
+  - console/oqa_agnostic/cpio_agnostic
   - console/curl_https
   - console/curl_ipv6
   - console/gd

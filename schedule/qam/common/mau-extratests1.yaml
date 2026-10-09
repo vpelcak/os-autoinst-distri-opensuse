@@ -40,7 +40,6 @@ schedule:
   - console/perf
   - console/sysctl
   - console/oqa_agnostic/sysstat_agnostic
-  - console/cpio
   - console/tar
   - console/ruby
   - console/tcpdump
@@ -50,6 +49,7 @@ conditional_schedule:
   version_specific:
     VERSION:
       '16.0':
+        - console/oqa_agnostic/cpio_agnostic
         - console/sssd_389ds_functional
         - console/rabbitmq
         - console/chrony
@@ -61,6 +61,7 @@ conditional_schedule:
         - qe-core/systemd/journal_remote
         - '{{arch_specific}}'
       15-SP7:
+        - console/oqa_agnostic/cpio_agnostic
         - console/sssd_389ds_functional
         - console/rabbitmq
         - console/chrony
@@ -72,6 +73,7 @@ conditional_schedule:
         - qe-core/systemd/journal_remote
         - '{{arch_specific}}'
       15-SP6:
+        - console/oqa_agnostic/cpio_agnostic
         - console/sssd_389ds_functional
         - console/rabbitmq
         - console/chrony
@@ -83,6 +85,7 @@ conditional_schedule:
         - qe-core/systemd/journal_remote
         - '{{arch_specific}}'
       15-SP5:
+        - console/oqa_agnostic/cpio_agnostic
         - console/sssd_389ds_functional
         - console/rabbitmq
         - console/chrony
@@ -93,6 +96,7 @@ conditional_schedule:
         - console/libxslt
         - '{{arch_specific}}'
       15-SP4:
+        - console/oqa_agnostic/cpio_agnostic
         - console/sssd_389ds_functional
         - console/rabbitmq
         - console/chrony
@@ -103,6 +107,7 @@ conditional_schedule:
         - console/libxslt
         - '{{arch_specific}}'
       15-SP3:
+        - console/oqa_agnostic/cpio_agnostic
         - console/sssd_389ds_functional
         - console/rabbitmq
         - console/chrony
@@ -111,6 +116,7 @@ conditional_schedule:
         - console/redis
         - '{{arch_specific}}'
       15-SP2:
+        - console/oqa_agnostic/cpio_agnostic
         - console/sssd_389ds_functional
         - console/rabbitmq
         - console/chrony
@@ -119,9 +125,12 @@ conditional_schedule:
         - console/redis
         - '{{arch_specific}}'
       12-SP5:
+        - console/cpio
         - console/openssl_nodejs
         - '{{arch_specific}}'
         - '{{sssd_12SP5_arch_specific}}'
+      12-SP3:
+        - console/cpio
   arch_specific:
     ARCH:
       x86_64:
